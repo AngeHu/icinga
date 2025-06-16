@@ -41,9 +41,9 @@
 - name: icingaweb.config.global.config_resource
   value: {{ .Values.auth.resource | default .Values.global.databases.icingaweb2.database | quote }}
 - name: icingaweb.config.logging.log
-  value: "syslog"
+  value:  "/var/log/icingaweb2/debug.log"
 - name: icingaweb.config.logging.level
-  value: "DEBUG"
+  value: "debug"
 - name: icingaweb.config.logging.application
   value: "icingaweb2"
 - name: icingaweb.groups.icingaweb2.backend
