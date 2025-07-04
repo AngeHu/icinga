@@ -1,0 +1,298 @@
+image:
+  repository: icinga/icingaweb2
+  tag: 2.12.1
+  pullPolicy: Always
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host:  # Add a host here
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+auth:
+  external:
+    enabled: true
+
+  db:
+    enabled: false
+    # resource: # Add the name of the db resource used by Icinga Web 2 here
+    admin_user: icingaadmin
+    admin_password:
+      value: password # Add a password here
+      credSecret: # Or use existing secret
+      secretKey:
+#
+#  ldpap:
+#    enabled: false
+#    resource:
+#    admin_user: icingaadmin
+#    admin_password:
+#      value: # Add a password here
+#      credSecret: # Or use existing secret
+#      secretKey:
+#
+#  ad:
+#    enabled: false
+#    resource:
+#    admin_user: icingaadmin
+#    admin_password:
+#      value: # Add a password here
+#      credSecret: # Or use existing secret
+#      secretKey:
+
+
+
+
+autologin:
+  type: external
+
+modules:
+  audit:
+    enabled: false
+    log:
+      type: syslog
+      ident: icingaweb2-audit
+      facility: auth
+    stream:
+      enabled: true
+      format: json
+      path: /var/log/icingaweb2/audit.json
+
+  businessprocess: {}  # TODO add parsing of existing processes later
+
+  cube:
+    enabled: false
+
+  director:
+    enabled: true
+    kickstart: true
+
+  graphite:
+    enabled: false
+    graphite:
+      url: graphite.example.com
+      credSecret: # Existing secret used for user and password
+      user:
+        value: # Specify username
+        secretKey: # Or use existing secret
+      password:
+        value: # Specify password
+        secretKey: # Or use existing secret
+      insecure: 1
+    ui:
+      default_time_range: 1
+      default_time_range_unit: hours
+      disable_no_graphs_found: 1
+    icinga:
+      graphite_writer_host_name_template: null
+      graphite_writer_service_name_template: null
+      customvar_obscured_check_command: null
+
+  icingadb:
+    enabled: true
+
+  incubator:
+    enabled: true
+
+  x509:
+    enabled: false
+    jobs: {}  # TODO: Add this
+    sni: {}  # TODO: Add this
+
+  kubernetes:
+    enabled: true
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+global:
+  api:
+    # host:  # only needed if Icinga 2 runs out of cluster
+    port: 5665
+    users:
+      credSecret: # Existing secret for director and icingaweb password
+      director:
+        password:
+          value: password # Add a password here
+          secretKey: # Or specify secret key
+        permissions:
+        - "*"
+
+      icingaweb:
+        password:
+          value: password # Add a password here
+          secretKey:  # Or specify secret key
+        permissions:
+        - "*"
+
+  databases:
+    director:
+      database: directordb
+      credSecret: # Existing secret name for username and password
+      username:
+        value: # Set username
+        secretKey: # Or specify secret key
+      password:
+        value: # Add a password here
+        secretKey: # Or specify secret key
+      enabled: true
+      # host: mariadb.example.com
+      # port: 3306
+      persistence:
+        enabled: false
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        # storageClass: ""
+        # volumeName: ""
+        # subPath: ""
+        matchLabels: {}
+        matchExpressions: []
+
+    icingadb:
+      database: icingadb
+      credSecret: # Existing secret name for username and password
+      username:
+        value: # Set username
+        secretKey: # Or specify secret key
+      password:
+        value: # Add a password here
+        secretKey: # Or specify secret key
+      enabled: true
+      # host: mariadb.example.com
+      # port: 3306
+      persistence:
+        enabled: false
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        # storageClass: ""
+        # volumeName: ""
+        # subPath: ""
+        matchLabels: {}
+        matchExpressions: []
+
+    icingaweb2:
+      database: icingaweb2db
+      credSecret: # Existing secret name for username and password
+      username:
+        value: # Set username
+        secretKey: # Or specify secret key
+      password:
+        value: # Add a password here
+        secretKey: # Or specify secret key
+      enabled: true
+      # host: mariadb.example.com
+      # port: 3306
+      persistence:
+        enabled: false
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        # storageClass: ""
+        # volumeName: ""
+        # subPath: ""
+        matchLabels: {}
+        matchExpressions: []
+
+    x509:
+      database: x509db
+      credSecret: # Existing secret name for username and password
+      username:
+        value: # Set username
+        secretKey: # Or specify secret key
+      password:
+        value: # Add a password here
+        secretKey: # Or specify secret key
+      enabled: false
+      # host: mariadb.example.com
+      # port: 3306
+      persistence:
+        enabled: false
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        # storageClass: ""
+        # volumeName: ""
+        # subPath: ""
+        matchLabels: {}
+        matchExpressions: []
+
+    kubernetes:
+      # Note that using secrets is not yet supported for Icinga Kubernetes.
+      database: kubernetes
+      credSecret: # Existing secret name for username and password
+      username:
+        value: # Set username
+        secretKey: # Or specify secret key
+      password:
+        value: # Add a password here
+        secretKey: # Or specify secret key
+      enabled: true
+      # host: mariadb.example.com
+      # port: 3306
+      persistence:
+        enabled: false
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        # storageClass: ""
+        # volumeName: ""
+        # subPath: ""
+        matchLabels: {}
+        matchExpressions: []
+
+  redis:
+    enabled: true
+    # host: redis.example.com
+    # port: 6379
