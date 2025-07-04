@@ -28,36 +28,23 @@
   value: "external"
 {{- end }}
 
-{{- /* SET OTHER TYPE OF AUTHENTICATION
-    {{- range $resource, $settings := .Values.auth }}
-    {{- if }}
-    {{- if .Values.auth.$resource.enabled}}
-    - name: icingaweb.authentication.{{ $resource }}.backend
-      value: {{ $setting.type | quote }}
-    - name: icingaweb.authentication.{{ $resource }}.resource
-      value: {{ $setting.resource | quote }}
-    - name: icingaweb.passwords.{{}}
-    {{- end }}
-    {{- end }}
-*/}}
-
 - name: icingaweb.authentication.icingaweb2.backend
   value: db {{- /* {{ .Values.auth.type | quote }}*/}}
 - name: icingaweb.authentication.icingaweb2.resource
-  value: {{ .Values.auth.db.resource | default .Values.global.databases.icingaweb2.database | quote }}
-- name: "icingaweb.passwords.icingaweb2.{{ .Values.auth.db.admin_user}}"
-{{- if .Values.auth.db.admin_password.value }}
-  value: {{ .Values.auth.db.admin_password.value | quote }}
-{{- else if and .Values.auth.db.admin_password.credSecret .Values.auth.db.admin_password.secretKey }}
+  value: {{ .Values.auth.other.resource | default .Values.global.databases.icingaweb2.database | quote }}
+- name: "icingaweb.passwords.icingaweb2.{{ .Values.auth.other.admin_user}}"
+{{- if .Values.auth.other.admin_password.value }}
+  value: {{ .Values.auth.other.admin_password.value | quote }}
+{{- else if and .Values.auth.other.admin_password.credSecret .Values.auth.other.admin_password.secretKey }}
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.auth.db.admin_password.credSecret | quote }}
-      key: {{ .Values.auth.db.admin_password.secretKey | quote }}
+      name: {{ .Values.auth.other.admin_password.credSecret | quote }}
+      key: {{ .Values.auth.other.admin_password.secretKey | quote }}
 {{- else }}
-{{ fail "Icinga Web auth admin password not set. Set either .Values.icingaweb2.auth.db.admin_password.value or .Values.icingaweb2.auth.db.admin_password.credSecret and .Values.icingaweb2.auth.db.admin_password.secretKey" }}
+{{ fail "Icinga Web auth admin password not set. Set either .Values.icingaweb2.auth.other.admin_password.value or .Values.icingaweb2.auth.other.admin_password.credSecret and .Values.icingaweb2.auth.other.admin_password.secretKey" }}
 {{- end}}
 - name: icingaweb.config.global.config_resource
-  value: {{ .Values.auth.db.resource | default .Values.global.databases.icingaweb2.database | quote }}
+  value: {{ .Values.auth.other.resource | default .Values.global.databases.icingaweb2.database | quote }}
 - name: icingaweb.config.logging.log
   value:  "/var/log/debug.log"
 - name: icingaweb.config.logging.level
@@ -65,11 +52,11 @@
 - name: icingaweb.config.logging.application
   value: "icingaweb2"
 - name: icingaweb.groups.icingaweb2.backend
-  value: {{ .Values.auth.db.type | quote }}
+  value: {{ .Values.auth.other.type | quote }}
 - name: icingaweb.groups.icingaweb2.resource
-  value: {{ .Values.auth.db.resource | default .Values.global.databases.icingaweb2.database | quote }}
+  value: {{ .Values.auth.other.resource | default .Values.global.databases.icingaweb2.database | quote }}
 - name: icingaweb.roles.Administrators.users
-  value: {{ .Values.auth.db.admin_user | quote }}
+  value: {{ .Values.auth.other.admin_user | quote }}
 - name: icingaweb.roles.Administrators.permissions
   value: '*'
 - name: icingaweb.roles.Administrators.groups

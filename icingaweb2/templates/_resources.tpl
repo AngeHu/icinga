@@ -6,6 +6,7 @@
 {{- end }}
 {{- end }}
 {{- range $resource, $settings := .Values.global.databases }}
+{{- if $settings.enabled }}
 - name: icingaweb.resources.{{ $settings.database }}.type
   value: db
 - name: icingaweb.resources.{{ $settings.database }}.db
@@ -39,6 +40,7 @@
 {{- if eq $resource "director" }}
 - name: icingaweb.resources.{{ $settings.database }}.charset
   value: utf8
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end -}}

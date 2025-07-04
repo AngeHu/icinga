@@ -32,38 +32,14 @@ auth:
   external:
     enabled: true
 
-  db:
-    enabled: false
+  other:
+    type: db
     # resource: # Add the name of the db resource used by Icinga Web 2 here
     admin_user: icingaadmin
     admin_password:
       value: password # Add a password here
       credSecret: # Or use existing secret
       secretKey:
-#
-#  ldpap:
-#    enabled: false
-#    resource:
-#    admin_user: icingaadmin
-#    admin_password:
-#      value: # Add a password here
-#      credSecret: # Or use existing secret
-#      secretKey:
-#
-#  ad:
-#    enabled: false
-#    resource:
-#    admin_user: icingaadmin
-#    admin_password:
-#      value: # Add a password here
-#      credSecret: # Or use existing secret
-#      secretKey:
-
-
-
-
-autologin:
-  type: external
 
 modules:
   audit:
